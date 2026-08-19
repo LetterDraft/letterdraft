@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import ResumeUpload from '@/components/ResumeUpload';
+import ResumeUpload from '../components/ResumeUpload';
 
 interface GradeResult {
   overallScore: number;
