@@ -111,13 +111,12 @@ export default function ResumeGradePage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold mb-2">Resume Grader</h1>
-      <p <p className="text-gray-600 mb-8">
-  Upload your resume and get an instant, detailed grade across the 5 things recruiters and ATS systems actually check.
-</p>
-<a href="/" className="block text-sm text-blue-600 hover:underline mb-8">
-  Got a job posting? Generate a tailored cover letter →
-</a>
+            <p className="text-gray-600 mb-8">
+        Upload your resume and get an instant, detailed grade across the 5 things recruiters and ATS systems actually check.
       </p>
+      <a href="/" className="block text-sm text-blue-600 hover:underline mb-8">
+        Got a job posting? Generate a tailored cover letter →
+      </a>
 
       <ResumeUpload onTextExtracted={(text) => setResumeText(text)} />
 
