@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ResumeUpload from '../components/ResumeUpload';
 
 interface GradeResult {
@@ -29,6 +29,18 @@ export default function ResumeGradePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<GradeResult | null>(null);
+  const [isPaid, setIsPaid] = useState(false);
+  const [rewriting, setRewriting] = useState(false);
+  const [rewrittenResume, setRewrittenResume] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      localStorage.setItem('paid', 'true');
+      window.history.replaceState({}, '', '/resume-grade');
+    }
+    setIsPaid(localStorage.getItem('paid') === 'true');
+  }, []);
 
   const handleGrade = async () => {
     if (resumeText.trim().length < 50) {
@@ -39,6 +51,7 @@ export default function ResumeGradePage() {
     setLoading(true);
     setError(null);
     setResult(null);
+    setRewrittenResume('');
 
     try {
       const res = await fetch('/api/grade-resume', {
@@ -59,6 +72,40 @@ export default function ResumeGradePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRewrite = async () => {
+    if (!isPaid) {
+      handleUpgrade();
+      return;
+    }
+
+    setRewriting(true);
+    setRewrittenResume('');
+
+    try {
+      const res = await fetch('/api/rewrite-resume', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resumeText }),
+      });
+      const data = await res.json();
+      setRewrittenResume(data.rewrittenResume);
+    } catch {
+      setError('Something went wrong generating your rewrite. Please try again.');
+    } finally {
+      setRewriting(false);
+    }
+  };
+
+  const handleUpgrade = async () => {
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ origin: window.location.origin }),
+    });
+    const data = await res.json();
+    window.location.href = data.url;
   };
 
   return (
@@ -110,7 +157,7 @@ export default function ResumeGradePage() {
             ))}
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-6 mb-8">
             <div>
               <h3 className="font-semibold text-green-700 mb-2">Top Strengths</h3>
               <ul className="text-sm text-gray-700 space-y-1 list-disc list-inside">
@@ -127,6 +174,37 @@ export default function ResumeGradePage() {
                 ))}
               </ul>
             </div>
+          </div>
+
+          <div className="border-t pt-6">
+            {!rewrittenResume && (
+              <button
+                onClick={handleRewrite}
+                disabled={rewriting}
+                className="w-full bg-green-600 text-white rounded-lg py-3 font-medium hover:bg-green-700 disabled:opacity-50"
+              >
+                {rewriting
+                  ? 'Rewriting...'
+                  : isPaid
+                  ? 'Rewrite My Resume'
+                  : 'Rewrite My Resume — Upgrade for $9/month'}
+              </button>
+            )}
+
+            {rewrittenResume && (
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-2">Your Rewritten Resume</h3>
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-sm text-gray-800 whitespace-pre-wrap">
+                  {rewrittenResume}
+                </div>
+                <button
+                  onClick={() => navigator.clipboard.writeText(rewrittenResume)}
+                  className="mt-3 text-sm text-blue-600 hover:underline"
+                >
+                  Copy to clipboard
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
