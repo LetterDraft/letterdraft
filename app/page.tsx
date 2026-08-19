@@ -61,10 +61,10 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-8">
       <div className="max-w-2xl w-full bg-white rounded-2xl shadow-md p-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">LetterDraft</h1>
-        <p <p className="text-gray-500 mb-6">Generate a professional cover letter in seconds.</p>
-<a href="/resume-grade" className="block text-sm text-blue-600 hover:underline mb-6">
-  Also job hunting? Try our free Resume Grader →
-</a>.</p>
+                <p className="text-gray-500 mb-6">Generate a professional cover letter in seconds.</p>
+        <a href="/resume-grade" className="block text-sm text-blue-600 hover:underline mb-6">
+          Also job hunting? Try our free Resume Grader →
+        </a>
 
         {showPaywall ? (
           <div className="text-center py-8">
