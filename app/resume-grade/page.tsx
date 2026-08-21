@@ -1,5 +1,5 @@
 'use client';
-
+import ResumeGraderFAQ from '@/app/components/ResumeGraderFAQ'; 
 import { useState, useEffect } from 'react';
 import ResumeUpload from '../components/ResumeUpload';
 
@@ -211,6 +211,7 @@ export default function ResumeGradePage() {
           </div>
         </div>
       )}
+      <ResumeGraderFAQ />
     </div>
   );
 }
